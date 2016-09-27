@@ -28,7 +28,7 @@ interface DAOInterface
 
     public function getUsersPointsRanking($limit);
 
-    public function grantBadgeToUser($userId, $badgeId);
+    public function grantBadgeToUser($userId, $badgeId, $eventId);
 
     public function hasBadgeUser($userId, $badgeId);
 

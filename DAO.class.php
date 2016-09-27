@@ -255,9 +255,9 @@ class DAO implements DAOInterface
     public function saveEvent(Event $event)
     {
         $sql = 'INSERT INTO gm_events
-                (alias, description, allow_repetitions, reach_required_repetitions, id_each_badge, id_reach_badge, each_points, max_points, each_callback, reach_callback)
+                (alias, description, allow_repetitions, reach_required_repetitions, id_each_badge, id_reach_badge, each_points, max_points, each_callback, reach_callback, multiple_reach_required_repetitions)
                 VALUES
-                (:alias, :description, :allow_repetitions, :reach_required_repetitions, :id_each_badge, :id_reach_badge, :each_points, :max_points, :each_callback, :reach_callback)';
+                (:alias, :description, :allow_repetitions, :reach_required_repetitions, :id_each_badge, :id_reach_badge, :each_points, :max_points, :each_callback, :reach_callback, :multiple_reach_required_repetitions)';
         $params = array(
             ':alias' => $event->getAlias(),
             ':description' => $event->getDescription(),
@@ -268,7 +268,8 @@ class DAO implements DAOInterface
             ':each_points' => $event->getEachPoints(),
             ':max_points' => $event->getMaxPoints(),
             ':each_callback' => $event->getEachCallback(),
-            ':reach_callback' => $event->getReachCallback()
+            ':reach_callback' => $event->getReachCallback(),
+            ':multiple_reach_required_repetitions' => $event->getReachMultipleRequiredRepetition()
         );
 
         $this->execute($sql, $params);
@@ -332,7 +333,9 @@ class DAO implements DAOInterface
 
     public function getUserBadges($userId)
     {
-        $sql = 'SELECT * FROM gm_user_badges WHERE id_user = :uid';
+        $sql = 'SELECT a.id_user, a.id_badge, a.id_event, a.badges_counter, a.grant_date FROM gm_user_badges a
+                WHERE id_user = :uid 
+                AND grant_date = (SELECT MAX(grant_date) FROM gm_user_badges WHERE id_user = :uid AND id_event = a.id_event )';
         $params = array(
             ':uid' => $userId
         );
@@ -420,12 +423,13 @@ class DAO implements DAOInterface
             return $this->toArrayObject($result, 'UserScore');
     }
 
-    public function grantBadgeToUser($userId, $badgeId)
+    public function grantBadgeToUser($userId, $badgeId, $eventId)
     {
-        $sql = 'INSERT INTO gm_user_badges (id_user, id_badge, badges_counter, grant_date) VALUES (:uid, :bid, 1, UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE badges_counter = badges_counter + 1';
+        $sql = 'INSERT INTO gm_user_badges (id_user, id_badge, id_event, badges_counter, grant_date) VALUES (:uid, :bid, :eid, 1, UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE badges_counter = badges_counter + 1';
         $params = array(
             ':uid' => $userId,
-            ':bid' => $badgeId
+            ':bid' => $badgeId,
+            ':eid' => $eventId
         );
         $this->execute($sql, $params);
         return true;

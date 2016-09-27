@@ -27,6 +27,16 @@ class Event extends Entity
     protected $eachCallback = null;
     protected $reachCallback = null;
 
+    // Added By AWIE
+    // save and array to have multiple reach of repetion with the same event
+    /*
+        in database this will save an array()
+        key     : required repetition
+        value   : idBadges
+    */
+
+    protected $multipleReachRequiredRepetitions = null;        /* Trigger counter (null = triggers every execution. $allowRepetitions must be true, otherwise triggers once) */
+
     function __construct($stdClass = null)
     {
         if ($stdClass)
@@ -96,6 +106,25 @@ class Event extends Entity
     public function getAllowRepetitions()
     {
         return $this->allowRepetitions;
+    }
+
+    public function getReachMultipleRequiredRepetition()
+    {
+        return $this->multipleReachRequiredRepetitions;
+    }
+
+     /**
+     * @param  array $array
+     * @return Event
+     * @throws Exception
+     */
+
+    public function setReachMultipleRequiredRepetition( $array )
+    {
+        // print( $array );die();
+        if (!is_array($array)) throw new Exception(__METHOD__ . ': Invalid format');
+        $this->multipleReachRequiredRepetitions = serialize( $array );
+        return $this;
     }
 
     /**

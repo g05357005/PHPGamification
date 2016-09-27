@@ -15,6 +15,7 @@ class UserBadge extends Entity
 {
     protected $idUser;
     protected $idBadge;
+    protected $idEvent;
     protected $badgesCounter = 0;
     protected $grantDate;
 
@@ -54,6 +55,11 @@ class UserBadge extends Entity
     public function getBadge()
     {
         return PHPGamification::getInstance()->getBadge($this->idBadge);
+    }
+
+    public function getIdEvent()
+    {
+        return $this->idEvent;
     }
 
 

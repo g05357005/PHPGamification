@@ -485,6 +485,30 @@ class PHPGamification
                                 $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
                         }
                     }
+
+                     /* 
+                        Added by awie - check multiple allow repitition 
+                        each repetition will have different batch
+                    */
+
+                    // var_dump( $eventCounter );
+
+                    if( !is_null( $event->getReachMultipleRequiredRepetition() ) ){
+                        $multiple_repetition = $event->getReachMultipleRequiredRepetition();
+                        $multiple_repetition = unserialize( $multiple_repetition );
+                        $max_repetition = max( array_keys( $multiple_repetition ) );
+
+                        // if event counter has not reach the max repetition
+                        if( $max_repetition >= $eventCounter ){
+                            // check all bagdes in the event
+                            foreach ($multiple_repetition as $reachRequiredRepeatition => $badge_alias) {
+                                if( $eventCounter == $reachRequiredRepeatition ){
+                                    $badge_to_assign = $this->getBadgeByAlias($badge_alias);
+                                    $this->grantBadge( $badge_to_assign , $currentEvent->getId(), $eventDate);
+                                }
+                            }
+                        }
+                    } // end multiple assign
                 }
             }
         }
@@ -507,7 +531,8 @@ class PHPGamification
         if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
 
         // Grant badge to user
-        $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId());
+        // Added by awie - Save id_event to user badges
+        $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId(), $eventId);
 
         // Log event
         $this->dao->logUserEvent($this->getUserId(), $eventId, null, $badge->getId(), null, $eventDate);
