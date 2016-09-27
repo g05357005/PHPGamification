@@ -410,6 +410,19 @@ class PHPGamification
                         $updateCounter = true;
                 }
             }
+
+            // Added by awie - get multiple repeatition
+            foreach ($currentEventTriggers as $event) {
+                if( !is_null( $event->getReachMultipleRequiredRepetition() ) ){
+                    $multiple_repetition = $event->getReachMultipleRequiredRepetition();
+                    $multiple_repetition = unserialize( $multiple_repetition );
+                    $max_repetition      = max( array_keys( $multiple_repetition ) );
+                    // update counter
+                    if( $max_repetition >= $eventCounter ) 
+                        $updateCounter = true;
+                }
+            }
+
             // Update counter for this event
             if ($updateCounter)
                 $this->dao->increaseEventCounter($this->getUserId(), $currentEvent->getId());
@@ -491,24 +504,17 @@ class PHPGamification
                         each repetition will have different batch
                     */
 
-                    // var_dump( $eventCounter );
-
-                    if( !is_null( $event->getReachMultipleRequiredRepetition() ) ){
-                        $multiple_repetition = $event->getReachMultipleRequiredRepetition();
-                        $multiple_repetition = unserialize( $multiple_repetition );
-                        $max_repetition = max( array_keys( $multiple_repetition ) );
-
-                        // if event counter has not reach the max repetition
-                        if( $max_repetition >= $eventCounter ){
-                            // check all bagdes in the event
-                            foreach ($multiple_repetition as $reachRequiredRepeatition => $badge_alias) {
-                                if( $eventCounter == $reachRequiredRepeatition ){
-                                    $badge_to_assign = $this->getBadgeByAlias($badge_alias);
-                                    $this->grantBadge( $badge_to_assign , $currentEvent->getId(), $eventDate);
-                                }
+                    // if event counter has not reach the max repetition for multiple reach required repeatition
+                    if( isset( $max_repetition ) && $max_repetition >= $eventCounter ){
+                        // check all bagdes in the event
+                        foreach ($multiple_repetition as $reachRequiredRepeatition => $badge_alias) {
+                            if( $eventCounter == $reachRequiredRepeatition ){
+                                $badge_to_assign = $this->getBadgeByAlias($badge_alias);
+                                $this->grantBadge( $badge_to_assign , $currentEvent->getId(), $eventDate);
                             }
                         }
-                    } // end multiple assign
+                    }
+                    // end multiple badge count by event counter
                 }
             }
         }
