@@ -41,4 +41,9 @@ class Badge extends Entity
     {
         return $this->description;
     }
+
+    public function getImageUrl()
+    {
+        return $this->imageUrl;
+    }
 }

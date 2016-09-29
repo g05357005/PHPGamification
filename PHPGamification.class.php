@@ -537,8 +537,17 @@ class PHPGamification
         if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
 
         // Grant badge to user
-        // Added by awie - Save id_event to user badges
+        // Modified by awie - Save id_event to user badges
         $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId(), $eventId);
+
+        // Only for docebo LMS
+        if( defined("IN_DOCEBO") ) {
+            /*
+                - Id Module is a id Event
+                - Id Action is id Badge
+            */
+            \EPSA\Notification\Notification::save( 'GAMIFICATION', '_GRANT_BADGE', $this->getUserId(), $eventId , $badge->getId() , '#' );
+        }
 
         // Log event
         $this->dao->logUserEvent($this->getUserId(), $eventId, null, $badge->getId(), null, $eventDate);

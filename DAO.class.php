@@ -333,9 +333,7 @@ class DAO implements DAOInterface
 
     public function getUserBadges($userId)
     {
-        $sql = 'SELECT a.id_user, a.id_badge, a.id_event, a.badges_counter, a.grant_date FROM gm_user_badges a
-                WHERE id_user = :uid 
-                AND grant_date = (SELECT MAX(grant_date) FROM gm_user_badges WHERE id_user = :uid AND id_event = a.id_event )';
+        $sql = 'SELECT * FROM gm_user_badges WHERE id_user = :uid';
         $params = array(
             ':uid' => $userId
         );
