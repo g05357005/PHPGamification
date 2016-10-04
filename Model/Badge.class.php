@@ -15,6 +15,9 @@ class Badge extends Entity
     protected $title;
     protected $description;
     protected $imageUrl;
+    protected $customImage;
+    protected $modifiedAt;
+    protected $modifiedBy;
 
     public function __construct($stdClass=null){
         if ($stdClass)
@@ -45,5 +48,10 @@ class Badge extends Entity
     public function getImageUrl()
     {
         return $this->imageUrl;
+    }
+
+    public function getCustomImage()
+    {
+        return $this->customImage;
     }
 }

@@ -235,6 +235,13 @@ class PHPGamification
      * @return Badge
      * @throws Exception
      */
+
+    // added by awie
+    public function getBadges()
+    {
+        return $this->badges;
+    }
+
     public function getBadge($id)
     {
         if (!isset($this->badges[$id])) throw new Exception(__METHOD__ . ': Invalid badge id: '.$id);
