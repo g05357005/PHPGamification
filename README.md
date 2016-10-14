@@ -49,8 +49,16 @@ $event->setAlias('login')
     ->setReachBadgeGranted($gamification->getBadgeByAlias('addict'));
 $gamification->addEvent($event);
 
+$event = new Event();
+$event->setAlias('post_to_blog')
+    ->setEachPointsGranted(150)
+    ->setEachCallback("MyOtherClass::myPostToBlogCallBackFunction")
+    ->setReachRequiredRepetitions(50)
+    ->setReachBadgeGranted($gamification->getBadgeByAlias('professional_writer'));
+    
 // Each post to blog/You wrote 5 post to your blog (100 points each + badge, 1000 points reach)
 // Assign multiple badge in event with required repeatition 
+
 /*
     param : array( 'repeatition required' => 'badge alias'  )
 
@@ -60,17 +68,13 @@ $gamification->addEvent($event);
 
 */
 
-$event = new Event();
 $event->setAlias('post_to_blog')
     ->setEachPointsGranted(150)
-    ->setEachCallback("MyOtherClass::myPostToBlogCallBackFunction")
-    ->setReachRequiredRepetitions(50)
-    ->setReachBadgeGranted($gamification->getBadgeByAlias('professional_writer'))
     ->setReachMultipleRequiredRepetition( array( '2' => 'novice',
                                                  '8' => 'regular',
-                                                 '16' => 'superstar_comment_posting'
+                                                 '16' => 'superstar'
                                                 ));
-    
+                                                
 $gamification->addEvent($event);
 
 /** Using it */
