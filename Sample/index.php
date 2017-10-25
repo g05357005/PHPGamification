@@ -107,8 +107,7 @@ if ($truncateDatabaseFull) {
     $event->setAlias('donate_money')
         ->setEachBadgeGranted($gamification->getBadgeByAlias('money_user'));
     $gamification->addEvent($event);
-
-} else if ($truncateDatabaseUsers == true) {
+} elseif ($truncateDatabaseUsers == true) {
     $gamification->truncateDatabase(false);
 }
 
@@ -131,21 +130,23 @@ try {
     $gamification->executeEvent('join_network');
 
     $gamification->executeEvent('login');
-    for ($i=0; $i<9; $i++)
+    for ($i=0; $i<9; $i++) {
         $gamification->executeEvent('login');
+    }
 
     $gamification->executeEvent('post_to_chat', array('additional data sent to callback functions'));
-    for ($i=0; $i<19; $i++)
+    for ($i=0; $i<19; $i++) {
         $gamification->executeEvent('post_to_chat');
+    }
 
-    for ($i=0; $i<60; $i++)
+    for ($i=0; $i<60; $i++) {
         $gamification->executeEvent('post_to_blog', array('YourPostId'=>$i));
+    }
 
     echo "<hr>";
     echo "<b>After execute events</b>";
     // Show all data
     showUser($gamification);
-
 } catch (Exception $e) {
     // Exceptions are not handled in Gamification classes, you need do it be yourself
     echo "Exception: " . $e;
@@ -167,17 +168,19 @@ function showUser(PHPGamification $gamification)
     foreach ($events as $event) {
 //        var_dump($event);
         echo "Event Id: $event[id] - Alias: " . $event['event']->getAlias() . " - Counter: $event[counter]<br>";
-        foreach ($event['triggers'] as $k => $trigger)
+        foreach ($event['triggers'] as $k => $trigger) {
             echo " &nbsp;  &nbsp; Trigger: $k - Reached: " . ($trigger['reached'] ? "true" : "false") . "<br>";
+        }
     }
 
     //Get user level, badges
     echo "<h2>getUserBadges</h2>";
     $badges = $gamification->getUserBadges();
-    if ($badges)
+    if ($badges) {
         foreach ($badges as $badge) {
             echo "Badge Id: " . $badge->getIdBadge() . " -  Counter: " . $badge->getBadgeCounter() . " - Alias: " . $badge->getBadge()->getAlias() . " - Description: " . $badge->getBadge()->getDescription() . " <br>";
         }
+    }
 
     echo "<h2>getUserAlerts</h2>";
     $alerts = $gamification->getUserAlerts();
@@ -185,29 +188,33 @@ function showUser(PHPGamification $gamification)
         echo "No level or badge alerts to show<br>";
     } else {
         foreach ($alerts as $alert) {
-            if ($alert->getIdBadge())
+            if ($alert->getIdBadge()) {
                 echo "Badge: " . $alert->getBadge()->getTitle(). " - Id Badge: ".$alert->getIdBadge();
-            if ($alert->getIdLevel())
+            }
+            if ($alert->getIdLevel()) {
                 echo "Level: " . $alert->getIdLevel() . " - Id Level: " . $alert->getIdLevel();
+            }
             echo "<br>";
         }
     }
 
     echo "<h2>getUserLog</h2>";
     $logs = $gamification->getUserLog();
-    if ($logs)
+    if ($logs) {
         foreach ($logs as $log) {
             echo "EventDate: " . $log->getEventDate()." - Id Event: " . $log->getIdEvent() . " -  Event: ".$log->getEvent()->getAlias();
-            if ($log->getPoints())
+            if ($log->getPoints()) {
                 echo " - Points: " . $log->getPoints();
-            if ($log->getIdBadge())
+            }
+            if ($log->getIdBadge()) {
                 echo " - Badge: " . $log->getBadge()->getTitle(). " - Id Badge: ".$log->getIdBadge();
-            if ($log->getIdLevel())
+            }
+            if ($log->getIdLevel()) {
                 echo " - Level: " . $log->getIdLevel() . " - Id Level: " . $log->getIdLevel();
+            }
             echo "<br>";
         }
+    }
 
     echo "<hr>";
 }
-
-

@@ -8,7 +8,6 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 use TiagoGouvea\PHPGamification;
 
 class UserLog extends Entity
@@ -20,13 +19,14 @@ class UserLog extends Entity
     protected $idLevel;
     protected $points;
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
-    function setIdUser($idUser)
+    public function setIdUser($idUser)
     {
         $this->idUser = $idUser;
     }

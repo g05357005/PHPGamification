@@ -19,9 +19,11 @@ class Badge extends Entity
     protected $modifiedAt;
     protected $modifiedBy;
 
-    public function __construct($stdClass=null){
-        if ($stdClass)
+    public function __construct($stdClass=null)
+    {
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
     public function getId()

@@ -13,16 +13,16 @@ function PHPGamificationAutoload($className)
     //    $class = str_replace('\\', '', $class);
     $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.class.php';
     //Can't use __DIR__ as it's only in PHP 5.3+
-    if (is_readable($file))
+    if (is_readable($file)) {
         require_once $file;
-    else {
+    } else {
 //        var_dump($file);
 //        die();
         $class = array_pop($classArray) . DIRECTORY_SEPARATOR . $class;
         $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.class.php';
-        if (is_readable($file))
+        if (is_readable($file)) {
             require_once $file;
-        else {
+        } else {
             // Notfound.
         }
     }

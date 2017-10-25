@@ -25,10 +25,11 @@ class Level extends Entity
         return $this->id;
     }
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
     public function getTitle()

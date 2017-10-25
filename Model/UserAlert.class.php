@@ -8,7 +8,6 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 use TiagoGouvea\PHPGamification;
 
 class UserAlert extends Entity
@@ -17,10 +16,11 @@ class UserAlert extends Entity
     protected $idBadge;
     protected $idLevel;
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
     public function getIdLevel()

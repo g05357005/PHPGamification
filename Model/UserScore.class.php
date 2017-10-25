@@ -8,7 +8,6 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 class UserScore extends Entity
 {
     protected $idUser;
@@ -17,7 +16,7 @@ class UserScore extends Entity
     protected $progress;
     private $level;
 
-    function setIdUser($idUser)
+    public function setIdUser($idUser)
     {
         $this->idUser = $idUser;
     }
@@ -42,10 +41,11 @@ class UserScore extends Entity
         return $this->idLevel;
     }
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
     public function setLevel(Level $level)

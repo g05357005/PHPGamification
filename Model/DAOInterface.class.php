@@ -8,7 +8,7 @@ namespace TiagoGouvea\PHPGamification\Model;
  */
 interface DAOInterface
 {
-    public function __construct($host,$dbname,$username,$password);
+    public function __construct($host, $dbname, $username, $password);
 
     public function saveBadge($alias, $title, $description, $imageURL);
 

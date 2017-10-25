@@ -45,7 +45,6 @@ class DAO implements DAOInterface
      */
     public function getConnection()
     {
-
         return $this->conn;
     }
 
@@ -79,8 +78,9 @@ class DAO implements DAOInterface
             $stmt->execute($params);
         }
         $result = $stmt->fetchAll();
-        if (is_array($result) && count($result) == 0)
+        if (is_array($result) && count($result) == 0) {
             $result = null;
+        }
         return $result;
     }
 
@@ -97,8 +97,9 @@ class DAO implements DAOInterface
             ':id' => $id
         );
         $results = $this->query($sql, $params);
-        if ($results)
+        if ($results) {
             return $results[0];
+        }
     }
 
     /**
@@ -114,8 +115,9 @@ class DAO implements DAOInterface
             ':alias' => $alias
         );
         $results = $this->query($sql, $params);
-        if ($results)
+        if ($results) {
             return $results[0];
+        }
     }
 
 //    public function toArray($query, $params = false)
@@ -126,16 +128,17 @@ class DAO implements DAOInterface
 //        return $a;
 //    }
 
-    private function toArrayObject(Array $dataArray, $targetClass, $keyField = null)
+    private function toArrayObject(array $dataArray, $targetClass, $keyField = null)
     {
         $return = array();
         foreach ($dataArray as $data) {
             $reflection = new ReflectionClass("TiagoGouvea\\PHPGamification\\Model\\" . $targetClass);
             $objInstance = $reflection->newInstanceArgs(array('StdClass' => $data));
-            if ($keyField != null)
+            if ($keyField != null) {
                 $return[$objInstance->get($keyField)] = $objInstance;
-            else
+            } else {
                 $return[] = $objInstance;
+            }
         }
         return $return;
     }
@@ -157,8 +160,9 @@ class DAO implements DAOInterface
     public function saveBadge($alias, $title, $description, $imageURL = null)
     {
         // Already exists?
-        if ($this->getByAlias('gm_badges', $alias))
+        if ($this->getByAlias('gm_badges', $alias)) {
             throw new Exception(__METHOD__ . ': Alias ' . $alias . ' already exists');
+        }
 
         $sql = 'INSERT INTO gm_badges
                 (alias,title, description,image_url)
@@ -243,8 +247,9 @@ class DAO implements DAOInterface
         $sql = 'SELECT * FROM gm_levels WHERE id<>' . $levelId . ' AND points>' . $score . ' ORDER BY points ASC LIMIT 1';
 //        die($sql);
         $results = $this->query($sql);
-        if ($results)
+        if ($results) {
             return new Level($results[0]);
+        }
     }
 
     /**
@@ -292,24 +297,27 @@ class DAO implements DAOInterface
     {
         $sql = 'SELECT * FROM gm_levels ';
         $result = $this->query($sql);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'Level', 'id');
+        }
     }
 
     public function getBadges()
     {
         $sql = 'SELECT * FROM gm_badges ';
         $result = $this->query($sql);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'Badge', 'id');
+        }
     }
 
     public function getEvents()
     {
         $sql = 'SELECT * FROM gm_events ';
         $result = $this->query($sql);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'Event', 'alias');
+        }
     }
 
     public function getUserAlerts($userId, $resetAlerts = false)
@@ -327,8 +335,9 @@ class DAO implements DAOInterface
             $this->execute($sql, $params);
         }
 
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'UserAlert');
+        }
     }
 
     public function getUserBadges($userId)
@@ -339,8 +348,9 @@ class DAO implements DAOInterface
         );
         $result = $this->query($sql, $params);
 
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'UserBadge');
+        }
     }
 
     public function getUserEvents($userId)
@@ -350,8 +360,9 @@ class DAO implements DAOInterface
             ':uid' => $userId
         );
         $result = $this->query($sql, $params);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'UserEvent');
+        }
     }
 
     public function getUserLog($userId)
@@ -361,8 +372,9 @@ class DAO implements DAOInterface
             ':uid' => $userId
         );
         $result = $this->query($sql, $params);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'UserLog');
+        }
     }
 
     public function getUserEvent($userId, $eventId)
@@ -373,9 +385,9 @@ class DAO implements DAOInterface
             ':eid' => $eventId
         );
         $result = $this->query($sql, $params);
-        if ($result)
+        if ($result) {
             return new UserEvent($result[0]);
-        else {
+        } else {
             $score = new UserEvent();
             return $score;
         }
@@ -397,9 +409,9 @@ class DAO implements DAOInterface
 //        echo "GetUserScore:<br>";var_dump($result);
 //        echo "<br><br>";
 //        die();
-        if ($result)
+        if ($result) {
             return new UserScore($result[0]);
-        else {
+        } else {
             $score = new UserScore();
             $score->setIdUser($userId);
             $score->setIdLevel($this->getFirstLevel()->getId());
@@ -417,8 +429,9 @@ class DAO implements DAOInterface
                 ORDER BY points DESC, id_user ASC
                 LIMIT ' . $limit;
         $result = $this->query($sql);
-        if ($result)
+        if ($result) {
             return $this->toArrayObject($result, 'UserScore');
+        }
     }
 
     public function grantBadgeToUser($userId, $badgeId, $eventId)
@@ -455,7 +468,9 @@ class DAO implements DAOInterface
             ':uid' => $userId,
             ':lid' => $levelId
         );
-        if ($levelId == 0) die ("00");
+        if ($levelId == 0) {
+            die("00");
+        }
         return $this->execute($sql, $params);
     }
 
@@ -486,7 +501,7 @@ class DAO implements DAOInterface
             ':p' => $points,
             ':bid' => $badgeId,
             ':lid' => $levelId,
-            ':edate' => ($eventDate ? $eventDate : date("Y-m-d H:i:s",time()))
+            ':edate' => ($eventDate ? $eventDate : date("Y-m-d H:i:s", time()))
         );
         return $this->execute($sql, $params);
     }
@@ -566,14 +581,13 @@ class DAO implements DAOInterface
                 TRUNCATE gm_user_logs;
                 TRUNCATE gm_user_scores;';
 
-        if ($truncateLevelBadge)
+        if ($truncateLevelBadge) {
             $sql .= 'TRUNCATE gm_levels;
                      TRUNCATE gm_badges;
                      TRUNCATE gm_events;';
+        }
 
         $this->execute($sql);
         return true;
     }
-
-
 }

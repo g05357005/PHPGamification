@@ -68,8 +68,9 @@ class PHPGamification
 
     public static function getInstance()
     {
-        if (self::$instance==null)
+        if (self::$instance==null) {
             self::$instance = new PHPGamification();
+        }
         return self::$instance;
     }
 
@@ -84,7 +85,9 @@ class PHPGamification
      */
     public function addBadge($alias, $title, $description, $imageURL = null)
     {
-        if (empty($alias) || empty($title)) throw new Exception(__METHOD__ . ': Invalid parameters');
+        if (empty($alias) || empty($title)) {
+            throw new Exception(__METHOD__ . ': Invalid parameters');
+        }
 
         // Save badge
         $badge = $this->dao->saveBadge($alias, $title, $description, $imageURL);
@@ -106,7 +109,9 @@ class PHPGamification
      */
     public function addLevel($points, $title, $description = null)
     {
-        if (!is_numeric($points) || empty($title)) throw new Exception(__METHOD__ . ': Invalid parameters');
+        if (!is_numeric($points) || empty($title)) {
+            throw new Exception(__METHOD__ . ': Invalid parameters');
+        }
         $level = $this->dao->saveLevel($points, $title, $description);
         $this->levels[$level->id] = $level;
         return $level;
@@ -127,8 +132,9 @@ class PHPGamification
         if (isset($this->events[$alias])) {
             // If event exists just add new trigger
             // Checking allowRepetitions matching with previously created event
-            if ($this->events[$alias]->getAllowRepetitions() != $event->getAllowRepetitions())
+            if ($this->events[$alias]->getAllowRepetitions() != $event->getAllowRepetitions()) {
                 throw new Exception(__METHOD__ . ': Allow reachRequiredRepetitions does not match for the event ' . $alias);
+            }
         } else {
             $this->events[$alias] = $event;
         }
@@ -173,7 +179,8 @@ class PHPGamification
         return $this->dao->saveLevelAlert($this->getUserId(), $id);
     }
 
-    public function getUserAllData(){
+    public function getUserAllData()
+    {
         return array(
             'userScores'=>$this->getUserScores(),
             'userBadges'=> $this->getUserBadges(),
@@ -188,7 +195,9 @@ class PHPGamification
      */
     public function getUserAlerts($resetAlerts = false)
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
         return $this->dao->getUserAlerts($this->getUserId(), $resetAlerts);
     }
 
@@ -199,17 +208,20 @@ class PHPGamification
      */
     public function getUserEvents()
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
         $return = array();
         $userEvents = $this->dao->getUserEvents($this->getUserId());
-        if ($userEvents)
+        if ($userEvents) {
             foreach ($userEvents as $userEvent) {
                 /* @var $userEvent UserEvent */
                 $event = $this->getEventById($userEvent->getIdEvent());
 
                 $eventTriggers = $this->eventsTriggers[$event->getAlias()];
-                if ($eventTriggers == null)
+                if ($eventTriggers == null) {
                     $eventTriggers = array($this->events[$event->getAlias()]);
+                }
                 $triggers = array();
                 /** @var $trigger Event */
                 foreach ($eventTriggers as $trigger) {
@@ -226,6 +238,7 @@ class PHPGamification
                     'triggers' => $triggers
                 );
             }
+        }
         return $return;
     }
 
@@ -244,7 +257,9 @@ class PHPGamification
 
     public function getBadge($id)
     {
-        if (!isset($this->badges[$id])) throw new Exception(__METHOD__ . ': Invalid badge id: '.$id);
+        if (!isset($this->badges[$id])) {
+            throw new Exception(__METHOD__ . ': Invalid badge id: '.$id);
+        }
         return $this->badges[$id];
     }
 
@@ -256,7 +271,9 @@ class PHPGamification
     public function getEventById($id)
     {
         foreach ($this->events as $event) {
-            if ($id == $event->getId()) return $event;
+            if ($id == $event->getId()) {
+                return $event;
+            }
         }
         throw new Exception(__METHOD__ . ': Invalid event id');
     }
@@ -268,8 +285,9 @@ class PHPGamification
      */
     public function getLevel($id)
     {
-        if ($this->levels[$id])
+        if ($this->levels[$id]) {
             return new Level($this->levels[$id]);
+        }
     }
 
     /**
@@ -288,7 +306,9 @@ class PHPGamification
      */
     public function getUserLog()
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
         return $this->dao->getUserLog($this->getUserId());
     }
 
@@ -299,7 +319,9 @@ class PHPGamification
      */
     public function getUserBadges()
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
         return $this->dao->getUserBadges($this->getUserId());
     }
 
@@ -310,7 +332,9 @@ class PHPGamification
      */
     public function getUserScores()
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
 
         $userScore = $this->dao->getUserScore($this->getUserId());
         $userScore->setProgress(100);
@@ -343,7 +367,9 @@ class PHPGamification
      */
     public function getUserId()
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
         return $this->userId;
     }
 
@@ -358,26 +384,31 @@ class PHPGamification
     public function executeEvent($alias, $additional = null, $eventDate = null)
     {
         // Is the service enabled?
-        if (!$this->letsGoParty)
+        if (!$this->letsGoParty) {
             return false;
+        }
 
         // Filter to user test
-        if (!is_null($this->testUserId))
-            if ($this->testUserId != $this->userId)
+        if (!is_null($this->testUserId)) {
+            if ($this->testUserId != $this->userId) {
                 return false;
+            }
+        }
 
         // Load game engine
 
         // Check invalid event
-        if (!isset($this->events[$alias]))
+        if (!isset($this->events[$alias])) {
             throw new Exception(__METHOD__ . ': Invalid event alias: ' . $alias);
+        }
 
         // Get id of event in $this->events array
         /* @var $currentEvent Event */
         $currentEvent = $this->events[$alias];
         $currentEventTriggers = $this->eventsTriggers[$alias];
-        if ($currentEventTriggers == null)
+        if ($currentEventTriggers == null) {
             $currentEventTriggers = array($currentEvent);
+        }
 
         // Get event counter and current points for this event
         $userEvent = $this->dao->getUserEvent($this->getUserId(), $currentEvent->getId());
@@ -395,7 +426,6 @@ class PHPGamification
         $executeEvent = true;
         if ($eventCounter > 0 && $currentEvent->getAllowRepetitions()===false) {
             $executeEvent = false;
-
         }
 
         // Is the event allow to execute?
@@ -413,26 +443,29 @@ class PHPGamification
                 // If any trigger for this event require more reachRequiredRepetitions than eventcounter, eventcounter is updated (increased +1)
                 /** @var $event Event */
                 foreach ($currentEventTriggers as $event) {
-                    if ((!is_null($event->getRequiredRepetitions()) && $event->getRequiredRepetitions() >= $eventCounter) || (is_null($event->getRequiredRepetitions()) && $event->getAllowRepetitions()))
+                    if ((!is_null($event->getRequiredRepetitions()) && $event->getRequiredRepetitions() >= $eventCounter) || (is_null($event->getRequiredRepetitions()) && $event->getAllowRepetitions())) {
                         $updateCounter = true;
+                    }
                 }
             }
 
             // Added by awie - get multiple repeatition
             foreach ($currentEventTriggers as $event) {
-                if( !is_null( $event->getReachMultipleRequiredRepetition() ) ){
+                if (!is_null($event->getReachMultipleRequiredRepetition())) {
                     $multiple_repetition = $event->getReachMultipleRequiredRepetition();
-                    $multiple_repetition = unserialize( $multiple_repetition );
-                    $max_repetition      = max( array_keys( $multiple_repetition ) );
+                    $multiple_repetition = unserialize($multiple_repetition);
+                    $max_repetition      = max(array_keys($multiple_repetition));
                     // update counter
-                    if( $max_repetition >= $eventCounter ) 
+                    if ($max_repetition >= $eventCounter) {
                         $updateCounter = true;
+                    }
                 }
             }
 
             // Update counter for this event
-            if ($updateCounter)
+            if ($updateCounter) {
                 $this->dao->increaseEventCounter($this->getUserId(), $currentEvent->getId());
+            }
 
             // Search triggers counter
             foreach ($currentEventTriggers as $event) {
@@ -441,10 +474,11 @@ class PHPGamification
                 // Execute each function callback
                 $callback = $event->getEachCallback();
                 if ($callback) {
-                    if (is_callable($callback))
+                    if (is_callable($callback)) {
                         $eachOk = call_user_func($callback, $additional);
-                    else
-                        throw new Exception(__METHOD__ . ': Each Callback not callable: ' . print_r($callback,true));
+                    } else {
+                        throw new Exception(__METHOD__ . ': Each Callback not callable: ' . print_r($callback, true));
+                    }
                 }
 
                 // if each iterative function returns false, event cancels execution.
@@ -454,8 +488,9 @@ class PHPGamification
                         $grantPoints = true;
 
                         // Check max points for this event - If event points counter greater than maxPoints, don't save anything
-                        if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
+                        if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints()) {
                             $grantPoints = false;
+                        }
 
                         // If points not reaches max event points, it saves them
                         if ($grantPoints) {
@@ -465,8 +500,9 @@ class PHPGamification
                     }
 
                     // Grant badges for each
-                    if (!is_null($event->getIdEachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdEachBadge()))
+                    if (!is_null($event->getIdEachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdEachBadge())) {
                         $this->grantBadge($this->badges[$event->getIdEachBadge()], $currentEvent->getId(), $eventDate);
+                    }
 
 
                     // Check if counter match reachRequiredRepetitions
@@ -478,10 +514,11 @@ class PHPGamification
                         // Execute trigger function
                         $callback = $event->getReachCallback();
                         if ($callback) {
-                            if (is_callable($callback))
+                            if (is_callable($callback)) {
                                 $reachOk = call_user_func($callback, $additional);
-                            else
-                                throw new Exception(__METHOD__ . ': Reach Callback not callable: ' . print_r($callback,true));
+                            } else {
+                                throw new Exception(__METHOD__ . ': Reach Callback not callable: ' . print_r($callback, true));
+                            }
                         }
 
 
@@ -492,8 +529,9 @@ class PHPGamification
                                 $grantPoints = true;
 
                                 // Check max points for this event - If event points OLD counter greater than maxPoints, don't save anything
-                                if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
+                                if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints()) {
                                     $grantPoints = false;
+                                }
                                 if ($grantPoints) {
                                     $this->grantPoints($event->getReachPoints(), $currentEvent->getId(), $eventDate);
                                     $this->dao->increaseEventPoints($this->getUserId(), $currentEvent->getId(), $event->getReachPoints());
@@ -501,23 +539,24 @@ class PHPGamification
                             }
 
                             // Grant badges
-                            if (!is_null($event->getIdReachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdReachBadge()))
+                            if (!is_null($event->getIdReachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdReachBadge())) {
                                 $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
+                            }
                         }
                     }
 
-                     /* 
-                        Added by awie - check multiple allow repitition 
-                        each repetition will have different batch
+                    /*
+                       Added by awie - check multiple allow repitition
+                       each repetition will have different batch
                     */
 
                     // if event counter has not reach the max repetition for multiple reach required repeatition
-                    if( isset( $max_repetition ) && $max_repetition >= $eventCounter ){
+                    if (isset($max_repetition) && $max_repetition >= $eventCounter) {
                         // check all bagdes in the event
                         foreach ($multiple_repetition as $reachRequiredRepeatition => $badge_alias) {
-                            if( $eventCounter == $reachRequiredRepeatition ){
+                            if ($eventCounter == $reachRequiredRepeatition) {
                                 $badge_to_assign = $this->getBadgeByAlias($badge_alias);
-                                $this->grantBadge( $badge_to_assign , $currentEvent->getId(), $eventDate);
+                                $this->grantBadge($badge_to_assign, $currentEvent->getId(), $eventDate);
                             }
                         }
                     }
@@ -541,19 +580,21 @@ class PHPGamification
      */
     public function grantBadge(Badge $badge, $eventId = null, $eventDate = null)
     {
-        if (is_null($this->userId)) throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        if (is_null($this->userId)) {
+            throw new Exception(__METHOD__ . ': User id must be set before start game engine');
+        }
 
         // Grant badge to user
         // Modified by awie - Save id_event to user badges
         $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId(), $eventId);
 
         // Only for docebo LMS
-        if( defined("IN_DOCEBO") ) {
+        if (defined("IN_DOCEBO")) {
             /*
                 - Id Module is a id Event
                 - Id Action is id Badge
             */
-            \EPSA\Notification\Notification::save( 'GAMIFICATION', '_GRANT_BADGE', $this->getUserId(), $eventId , $badge->getId() , '#' );
+            \EPSA\Notification\Notification::save('GAMIFICATION', '_GRANT_BADGE', $this->getUserId(), $eventId, $badge->getId(), '#');
         }
 
         // Log event
@@ -579,8 +620,9 @@ class PHPGamification
      */
     private function grantLevel($levelId, $eventId = null, $eventDate = null)
     {
-        if (is_null($this->userId))
+        if (is_null($this->userId)) {
             throw new Exception(__METHOD__ . ': User id must be set before execute game engine');
+        }
 
 //        echo "<br>aaa $levelId bbb $eventId<br>";
         // Grant level
@@ -666,10 +708,12 @@ class PHPGamification
      */
     public function setUserId($userId)
     {
-        if ($this->engineStarted == false)
+        if ($this->engineStarted == false) {
             $this->startEngine();
-        if (!is_numeric($userId))
+        }
+        if (!is_numeric($userId)) {
             throw new Exception(__METHOD__ . ': Invalid parameters');
+        }
         $this->userId = $userId;
         return true;
     }
@@ -680,15 +724,19 @@ class PHPGamification
      */
     private function startEngine()
     {
-        if ($this->engineStarted == true) return;
+        if ($this->engineStarted == true) {
+            return;
+        }
 
         if (count($this->events) == 0) {
             $this->events = $this->dao->getEvents();
         }
-        if (count($this->badges) == 0)
+        if (count($this->badges) == 0) {
             $this->badges = $this->dao->getBadges();
-        if (count($this->levels) == 0)
+        }
+        if (count($this->levels) == 0) {
             $this->levels = $this->dao->getLevels();
+        }
     }
 
     /**
@@ -699,7 +747,9 @@ class PHPGamification
      */
     public function setTestUserId($userId)
     {
-        if (!is_numeric($userId)) throw new Exception(__METHOD__ . ': Invalid parameters');
+        if (!is_numeric($userId)) {
+            throw new Exception(__METHOD__ . ': Invalid parameters');
+        }
 
         $this->testUserId = $userId;
 

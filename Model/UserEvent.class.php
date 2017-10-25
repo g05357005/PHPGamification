@@ -8,7 +8,6 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 class UserEvent extends Entity
 {
     protected $idUser;
@@ -16,18 +15,19 @@ class UserEvent extends Entity
     protected $eventCounter = 0;
     protected $pointsCounter = 0;
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
-    function setIdUser($idUser)
+    public function setIdUser($idUser)
     {
         $this->idUser = $idUser;
     }
 
-    function setIdEvent($idEvent)
+    public function setIdEvent($idEvent)
     {
         $this->idEvent = $idEvent;
     }
@@ -52,5 +52,4 @@ class UserEvent extends Entity
     {
         return $this->idUser;
     }
-
 }

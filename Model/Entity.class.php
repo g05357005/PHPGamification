@@ -8,12 +8,11 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 use Exception;
 
 abstract class Entity
 {
-    abstract function __construct($stdClass = null);
+    abstract public function __construct($stdClass = null);
 
     protected function fillAtributes($stdClass, $obj)
     {
@@ -39,7 +38,6 @@ abstract class Entity
 //            var_dump($var);
 //            var_dump($fixedVar);
 //            echo "<br>";
-
         }
     }
 
@@ -47,5 +45,4 @@ abstract class Entity
     {
         return $this->$atribute;
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace TiagoGouvea\PHPGamification\Model;
 
-
 use TiagoGouvea\PHPGamification;
 
 class UserBadge extends Entity
@@ -19,13 +18,14 @@ class UserBadge extends Entity
     protected $badgesCounter = 0;
     protected $grantDate;
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
-    function setIdUser($idUser)
+    public function setIdUser($idUser)
     {
         $this->idUser = $idUser;
     }
@@ -61,6 +61,4 @@ class UserBadge extends Entity
     {
         return $this->idEvent;
     }
-
-
 }

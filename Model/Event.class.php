@@ -37,10 +37,11 @@ class Event extends Entity
 
     protected $multipleReachRequiredRepetitions = null;        /* Trigger counter (null = triggers every execution. $allowRepetitions must be true, otherwise triggers once) */
 
-    function __construct($stdClass = null)
+    public function __construct($stdClass = null)
     {
-        if ($stdClass)
+        if ($stdClass) {
             $this->fillAtributes($stdClass, $this);
+        }
     }
 
     public function getBadge()
@@ -113,17 +114,19 @@ class Event extends Entity
         return $this->multipleReachRequiredRepetitions;
     }
 
-     /**
-     * @param  array $array
-     * @return Event
-     * @throws Exception
-     */
+    /**
+    * @param  array $array
+    * @return Event
+    * @throws Exception
+    */
 
-    public function setReachMultipleRequiredRepetition( $array )
+    public function setReachMultipleRequiredRepetition($array)
     {
         // print( $array );die();
-        if (!is_array($array)) throw new Exception(__METHOD__ . ': Invalid format');
-        $this->multipleReachRequiredRepetitions = serialize( $array );
+        if (!is_array($array)) {
+            throw new Exception(__METHOD__ . ': Invalid format');
+        }
+        $this->multipleReachRequiredRepetitions = serialize($array);
         return $this;
     }
 
@@ -134,7 +137,9 @@ class Event extends Entity
      */
     public function setAllowRepetitions($bool)
     {
-        if (!is_bool($bool)) throw new Exception(__METHOD__ . ': Invalid AllowRepetitions');
+        if (!is_bool($bool)) {
+            throw new Exception(__METHOD__ . ': Invalid AllowRepetitions');
+        }
         $this->allowRepetitions = $bool;
         return $this;
     }
@@ -196,8 +201,9 @@ class Event extends Entity
      */
     public function setEachCallback($callback)
     {
-        if (!is_callable($callback))
-            throw new Exception(__METHOD__ . ': Invalid EachCallback function: '.print_r($callback,true));
+        if (!is_callable($callback)) {
+            throw new Exception(__METHOD__ . ': Invalid EachCallback function: '.print_r($callback, true));
+        }
         $this->eachCallback = ($callback);
         return $this;
     }
@@ -209,8 +215,9 @@ class Event extends Entity
      */
     public function setReachCallback($callback)
     {
-        if (!is_callable($callback))
-            throw new Exception(__METHOD__ . ': Invalid EventCallback function: '.print_r($callback,true));
+        if (!is_callable($callback)) {
+            throw new Exception(__METHOD__ . ': Invalid EventCallback function: '.print_r($callback, true));
+        }
         $this->reachCallback = ($callback);
         return $this;
     }
@@ -222,7 +229,9 @@ class Event extends Entity
      */
     public function setId($f)
     {
-        if (!is_numeric($f)) throw new Exception(__METHOD__ . ': Invalid id');
+        if (!is_numeric($f)) {
+            throw new Exception(__METHOD__ . ': Invalid id');
+        }
 
         $this->id = $f;
 
@@ -236,7 +245,9 @@ class Event extends Entity
      */
     public function setMaxPointsGranted($n)
     {
-        if (!is_numeric($n)) throw new Exception(__METHOD__ . ': Invalid points');
+        if (!is_numeric($n)) {
+            throw new Exception(__METHOD__ . ': Invalid points');
+        }
         $this->maxPoints = $n;
         return $this;
     }
@@ -248,14 +259,18 @@ class Event extends Entity
      */
     public function setEachPointsGranted($n)
     {
-        if (!is_numeric($n)) throw new Exception(__METHOD__ . ': Invalid points');
+        if (!is_numeric($n)) {
+            throw new Exception(__METHOD__ . ': Invalid points');
+        }
         $this->eachPoints = $n;
         return $this;
     }
 
     public function setReachPointsGranted($n)
     {
-        if (!is_numeric($n)) throw new Exception(__METHOD__ . ': Invalid points');
+        if (!is_numeric($n)) {
+            throw new Exception(__METHOD__ . ': Invalid points');
+        }
         $this->reachPoints = $n;
         return $this;
     }
@@ -267,12 +282,10 @@ class Event extends Entity
      */
     public function setReachRequiredRepetitions($n)
     {
-        if (!is_numeric($n)) throw new Exception(__METHOD__ . ': Invalid reachRequiredRepetitions');
+        if (!is_numeric($n)) {
+            throw new Exception(__METHOD__ . ': Invalid reachRequiredRepetitions');
+        }
         $this->reachRequiredRepetitions = $n;
         return $this;
     }
-
-
-
-
 }
