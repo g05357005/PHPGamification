@@ -79,15 +79,16 @@ class PHPGamification
      * @param $title
      * @param $description
      * @param null $imageURL
+     * @param null $customImage
      * @throws Exception
      * @return Badge
      */
-    public function addBadge($alias, $title, $description, $imageURL = null)
+    public function addBadge($alias, $title, $description, $imageURL = null, $customImage = null)
     {
         if (empty($alias) || empty($title)) throw new Exception(__METHOD__ . ': Invalid parameters');
 
         // Save badge
-        $badge = $this->dao->saveBadge($alias, $title, $description, $imageURL);
+        $badge = $this->dao->saveBadge($alias, $title, $description, $imageURL, $customImage);
 
         // Add badge to gamification engine
         $this->badges[$badge->getId()] = $badge;
@@ -374,8 +375,8 @@ class PHPGamification
 
         // Get id of event in $this->events array
         /* @var $currentEvent Event */
-        $currentEvent = $this->events[$alias];
-        $currentEventTriggers = $this->eventsTriggers[$alias];
+        $currentEvent = $this->events[$alias];        
+        $currentEventTriggers = isset($this->eventsTriggers[$alias]) ? $this->eventsTriggers[$alias] : null; //$currentEventTriggers = $this->eventsTriggers[$alias];
         if ($currentEventTriggers == null)
             $currentEventTriggers = array($currentEvent);
 
@@ -448,6 +449,7 @@ class PHPGamification
                 }
 
                 // if each iterative function returns false, event cancels execution.
+                
                 if ($eachOk) {
                     // Grant points for each
                     if ($event->getEachPoints()) {
@@ -467,6 +469,7 @@ class PHPGamification
                     // Grant badges for each
                     if (!is_null($event->getIdEachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdEachBadge()))
                         $this->grantBadge($this->badges[$event->getIdEachBadge()], $currentEvent->getId(), $eventDate);
+                        
 
 
                     // Check if counter match reachRequiredRepetitions
@@ -492,8 +495,8 @@ class PHPGamification
                                 $grantPoints = true;
 
                                 // Check max points for this event - If event points OLD counter greater than maxPoints, don't save anything
-                                if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
-                                    $grantPoints = false;
+                                //if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
+                                //    $grantPoints = false;
                                 if ($grantPoints) {
                                     $this->grantPoints($event->getReachPoints(), $currentEvent->getId(), $eventDate);
                                     $this->dao->increaseEventPoints($this->getUserId(), $currentEvent->getId(), $event->getReachPoints());
@@ -501,8 +504,22 @@ class PHPGamification
                             }
 
                             // Grant badges
-                            if (!is_null($event->getIdReachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdReachBadge()))
+                            if (!is_null($event->getIdReachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdReachBadge())) {
                                 $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
+                                if ($event->getCombinable()==1){
+									$this->dao->setEventCounter(intval($event->getId()), $this->getUserId(), intval(0));
+									$eventCounter = null;
+									
+								}
+								return false;
+                            }
+
+                            if (!is_null($event->getIdReachBadge()) && $event->getCombinable()==1){
+                                $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
+                                $this->dao->setEventCounter(intval($event->getId()), $this->getUserId(), intval(0));
+								$eventCounter = null;
+								return false;
+                            }     
                         }
                     }
 
@@ -522,7 +539,7 @@ class PHPGamification
                         }
                     }
                     // end multiple badge count by event counter
-                }
+                } //a
             }
         }
 
@@ -545,16 +562,16 @@ class PHPGamification
 
         // Grant badge to user
         // Modified by awie - Save id_event to user badges
-        $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId(), $eventId);
+        $this->dao->grantBadgeToUser($this->getUserId(), $badge->getId(), $eventId, $eventDate);
 
         // Only for docebo LMS
-        if( defined("IN_DOCEBO") ) {
-            /*
-                - Id Module is a id Event
-                - Id Action is id Badge
-            */
+        /*
+        if( defined("IN_DOCEBO") ) {            
+            //    - Id Module is a id Event
+            //    - Id Action is id Badge            
             \EPSA\Notification\Notification::save( 'GAMIFICATION', '_GRANT_BADGE', $this->getUserId(), $eventId , $badge->getId() , '#' );
         }
+        */
 
         // Log event
         $this->dao->logUserEvent($this->getUserId(), $eventId, null, $badge->getId(), null, $eventDate);
@@ -613,6 +630,21 @@ class PHPGamification
         $this->dao->grantPointsToUser($this->getUserId(), $points);
         // Log event
         $this->dao->logUserEvent($this->getUserId(), $eventId, $points, null, null, $eventDate);
+
+        if ($score->getIdLevel()) {
+            // Updated points for levels comparison
+            $userPoints += $points;
+
+            // Check levels higher than user level
+            $nextLevel = $this->dao->getNextLevel($score->getIdLevel(), $score->getPoints());
+            if ($nextLevel) {
+                // Check if user reaches next level
+                if ($userPoints >= $nextLevel->getPoints()) {
+                    $this->grantLevel($nextLevel->getId(), $eventId, $eventDate);
+                }
+            }
+        }
+        /*
         // Updated points for levels comparison
         $userPoints += $points;
         // Check levels higher than user level
@@ -623,6 +655,7 @@ class PHPGamification
                 $this->grantLevel($nextLevel->getId(), $eventId, $eventDate);
             }
         }
+        */
     }
 
     public function pointsToNextLevel()

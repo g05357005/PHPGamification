@@ -13,6 +13,7 @@ use TiagoGouvea\PHPGamification;
 
 class UserLog extends Entity
 {
+    protected $id = null;
     protected $idUser;
     protected $idEvent;
     protected $eventDate;
@@ -24,6 +25,25 @@ class UserLog extends Entity
     {
         if ($stdClass)
             $this->fillAtributes($stdClass, $this);
+    }
+
+    /**
+     * @param $f
+     * @return Event
+     * @throws Exception
+     */
+    public function setId($f)
+    {
+        if (!is_numeric($f)) throw new Exception(__METHOD__ . ': Invalid id');
+
+        $this->id = $f;
+
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     function setIdUser($idUser)

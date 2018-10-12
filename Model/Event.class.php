@@ -17,7 +17,7 @@ class Event extends Entity
     protected $description = null;        /* Event description */
 
     protected $reachRequiredRepetitions = null;        /* Trigger counter (null = triggers every execution. $allowRepetitions must be true, otherwise triggers once) */
-    protected $allowRepetitions = false;  /* Allows reachRequiredRepetitions (Default: YES) */
+    protected $allowRepetitions = true;  /* Allows reachRequiredRepetitions (Default: YES) */
     protected $maxPoints = null;          /* Max points granted for this event */
 
     protected $idEachBadge = null;        /* Badge granted when triggers */
@@ -26,6 +26,8 @@ class Event extends Entity
     protected $reachPoints = null;        /* Points granted when reachRequiredRepetitions are reached */
     protected $eachCallback = null;
     protected $reachCallback = null;
+
+    protected $combinable = null;
 
     // Added By AWIE
     // save and array to have multiple reach of repetion with the same event
@@ -111,6 +113,11 @@ class Event extends Entity
     public function getReachMultipleRequiredRepetition()
     {
         return $this->multipleReachRequiredRepetitions;
+    }
+
+    public function getCombinable()
+    {
+        return $this->combinable;
     }
 
      /**
@@ -272,7 +279,16 @@ class Event extends Entity
         return $this;
     }
 
-
-
+    /**
+     * @param $n
+     * @return Event
+     * @throws Exception
+     */
+    public function setCombinable($n)
+    {
+        if (!is_numeric($n)) throw new Exception(__METHOD__ . ': Invalid combinable value');
+        $this->combinable = $n;
+        return $this;
+    }
 
 }

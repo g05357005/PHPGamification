@@ -21,7 +21,7 @@ require_once('MyOtherClass.php');
 
 // Creation of gamification engine and DAO
 $gamification = new PHPGamification();
-$gamification->setDAO(new DAO('localhost', 'eventos_wp', 'rut', ''));
+$gamification->setDAO(new DAO('localhost', 'dynamoove', 'root', ''));
 
 // Reser all data (be careful, only to test purpose)
 $truncateDatabaseFull = true; // Will truncate "levels" and "badges" tables, and ALL data (config+user data)
@@ -197,7 +197,7 @@ function showUser(PHPGamification $gamification)
     $logs = $gamification->getUserLog();
     if ($logs)
         foreach ($logs as $log) {
-            echo "EventDate: " . $log->getEventDate()." - Id Event: " . $log->getIdEvent() . " -  Event: ".$log->getEvent()->getAlias();
+            echo "EventDate: " . $log->getEventDate()." (#".$log->getId().") - Id Event: " . $log->getIdEvent() . " -  Event: ".$log->getEvent()->getAlias();
             if ($log->getPoints())
                 echo " - Points: " . $log->getPoints();
             if ($log->getIdBadge())

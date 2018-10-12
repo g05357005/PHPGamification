@@ -6,17 +6,10 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema emjf_wpgdgjf
--- -----------------------------------------------------
-
--- -----------------------------------------------------
 -- Table `gm_user_alerts`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_alerts` (
-  `id_user` INT(10) UNSIGNED NOT NULL,
+  `id_user` INT(11) UNSIGNED NOT NULL,
   `id_badge` INT(10) UNSIGNED NULL DEFAULT NULL,
   `id_level` INT(10) UNSIGNED NULL DEFAULT NULL,
   INDEX `id_user` (`id_user` ASC))
@@ -28,8 +21,9 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `gm_user_badges`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_badges` (
-  `id_user` INT(10) UNSIGNED NOT NULL,
+  `id_user` INT(11) UNSIGNED NOT NULL,
   `id_badge` INT(10) UNSIGNED NOT NULL,
+  `id_event` INT(10) UNSIGNED NOT NULL,
   `badges_counter` INT(10) UNSIGNED NOT NULL,
   `grant_date` DATETIME NOT NULL,
   PRIMARY KEY (`id_user`, `id_badge`))
@@ -41,10 +35,10 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `gm_user_events`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_events` (
-  `id_user` INT(10) UNSIGNED NOT NULL,
+  `id_user` INT(11) UNSIGNED NOT NULL,
   `id_event` INT(10) UNSIGNED NOT NULL,
   `event_counter` INT(10) UNSIGNED NOT NULL,
-  `points_counter` INT(10) UNSIGNED NOT NULL,
+  `points_counter` INT(10) UNSIGNED NOT NULL default '0',
   PRIMARY KEY (`id_user`, `id_event`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -54,12 +48,14 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `gm_user_logs`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_logs` (
-  `id_user` INT(10) UNSIGNED NOT NULL,
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id_user` INT(11) UNSIGNED NOT NULL,
   `id_event` INT(10) UNSIGNED NULL DEFAULT NULL,
   `event_date` DATETIME NOT NULL,
   `id_badge` INT(10) UNSIGNED NULL DEFAULT NULL,
   `id_level` INT(10) UNSIGNED NULL DEFAULT NULL,
   `points` INT(10) UNSIGNED NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
   INDEX `id_user` (`id_user` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -69,7 +65,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `gm_user_scores`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_scores` (
-  `id_user` INT(10) UNSIGNED NOT NULL,
+  `id_user` INT(11) UNSIGNED NOT NULL,
   `points` INT(10) UNSIGNED NOT NULL,
   `id_level` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id_user`))
@@ -86,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `gm_badges` (
   `title` VARCHAR(64) NOT NULL,
   `description` TEXT NULL,
   `image_url` VARCHAR(96) NULL,
+  `custom_image` VARCHAR(150) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -118,6 +115,8 @@ CREATE TABLE IF NOT EXISTS `gm_events` (
   `reach_points` INT NULL,
   `each_callback` VARCHAR(64) NULL,
   `reach_callback` VARCHAR(64) NULL,
+`multiple_reach_required_repetitions` TEXT NULL,
+    `combinable` INT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 COMMENT = 'event_callback';
