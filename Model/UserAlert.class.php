@@ -13,6 +13,7 @@ use TiagoGouvea\PHPGamification;
 
 class UserAlert extends Entity
 {
+    protected $id;
     protected $idUser;
     protected $idBadge;
     protected $idLevel;
@@ -21,6 +22,25 @@ class UserAlert extends Entity
     {
         if ($stdClass)
             $this->fillAtributes($stdClass, $this);
+    }
+    
+    /**
+     * @param $f
+     * @return Event
+     * @throws Exception
+     */
+    public function setId($f)
+    {
+        if (!is_numeric($f)) throw new Exception(__METHOD__ . ': Invalid id');
+
+        $this->id = $f;
+
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getIdLevel()

@@ -9,9 +9,11 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- Table `gm_user_alerts`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gm_user_alerts` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_user` INT(11) UNSIGNED NOT NULL,
   `id_badge` INT(10) UNSIGNED NULL DEFAULT NULL,
   `id_level` INT(10) UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
   INDEX `id_user` (`id_user` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;

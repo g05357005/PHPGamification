@@ -319,7 +319,7 @@ class DAO implements DAOInterface
 
     public function getUserAlerts($userId, $resetAlerts = false)
     {
-        $sql = 'SELECT id_user, id_badge, id_level FROM gm_user_alerts WHERE id_user = :uid';
+        $sql = 'SELECT id, id_user, id_badge, id_level FROM gm_user_alerts WHERE id_user = :uid ORDER BY id asc';
         $params = array(
             ':uid' => $userId
         );

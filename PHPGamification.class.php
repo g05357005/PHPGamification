@@ -495,8 +495,9 @@ class PHPGamification
                                 $grantPoints = true;
 
                                 // Check max points for this event - If event points OLD counter greater than maxPoints, don't save anything
-                                //if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
-                                //    $grantPoints = false;
+                                if (!is_null($event->getMaxpoints()) && $eventPoints >= $event->getMaxpoints())
+                                    $grantPoints = false;
+
                                 if ($grantPoints) {
                                     $this->grantPoints($event->getReachPoints(), $currentEvent->getId(), $eventDate);
                                     $this->dao->increaseEventPoints($this->getUserId(), $currentEvent->getId(), $event->getReachPoints());
@@ -506,20 +507,24 @@ class PHPGamification
                             // Grant badges
                             if (!is_null($event->getIdReachBadge()) && !$this->dao->hasBadgeUser($this->getUserId(), $event->getIdReachBadge())) {
                                 $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
+                                /*
                                 if ($event->getCombinable()==1){
 									$this->dao->setEventCounter(intval($event->getId()), $this->getUserId(), intval(0));
 									$eventCounter = null;
 									
 								}
-								return false;
+                                return false;
+                                */
                             }
 
+                            /*
                             if (!is_null($event->getIdReachBadge()) && $event->getCombinable()==1){
                                 $this->grantBadge($this->badges[$event->getIdReachBadge()], $currentEvent->getId(), $eventDate);
                                 $this->dao->setEventCounter(intval($event->getId()), $this->getUserId(), intval(0));
 								$eventCounter = null;
 								return false;
-                            }     
+                            }    
+                            */ 
                         }
                     }
 

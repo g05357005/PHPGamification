@@ -13,7 +13,7 @@ use TiagoGouvea\PHPGamification;
 
 class UserLog extends Entity
 {
-    protected $id = null;
+    protected $id;
     protected $idUser;
     protected $idEvent;
     protected $eventDate;
